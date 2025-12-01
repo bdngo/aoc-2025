@@ -24,13 +24,8 @@ pub fn part2(input: String) -> u64 {
         .filter_map(|x| x.parse().ok())
         .collect();
     for turn in turns {
-        let absolute_turns: u64 = turn.unsigned_abs();
-        for _ in 0..absolute_turns {
-            if turn < 0 {
-                dial = (dial - 1) % 100;
-            } else if turn > 0 {
-                dial = (dial + 1) % 100;
-            }
+        for _ in 0..(turn.unsigned_abs()) {
+            dial = (dial + turn.signum()) % 100;
             if dial == 0 {
                 password += 1;
             }
