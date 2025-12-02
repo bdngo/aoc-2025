@@ -1,13 +1,12 @@
+use crate::utils;
+
 const MODULUS: i64 = 100;
 
 pub fn part1(input: String) -> u64 {
     let mut dial: i64 = 50;
     let mut num_zeroes: u64 = 0;
     let with_direction: String = input.replace("R", "").replace("L", "-");
-    let turns: Vec<i64> = with_direction
-        .split_whitespace()
-        .filter_map(|x| x.parse().ok())
-        .collect();
+    let turns: Vec<i64> = utils::string_to_ints(with_direction);
     for turn in turns {
         dial = (dial + turn).rem_euclid(MODULUS);
         if dial == 0 {
@@ -21,10 +20,7 @@ pub fn part2(input: String) -> u64 {
     let mut dial: i64 = 50;
     let mut password: u64 = 0;
     let with_direction: String = input.replace("R", "").replace("L", "-");
-    let turns: Vec<i64> = with_direction
-        .split_whitespace()
-        .filter_map(|x| x.parse().ok())
-        .collect();
+    let turns: Vec<i64> = utils::string_to_ints(with_direction);
     for turn in turns {
         let num_crossings = if turn >= 0 {
             (dial + turn).div_euclid(MODULUS)
