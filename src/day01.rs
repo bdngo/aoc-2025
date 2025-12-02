@@ -1,3 +1,5 @@
+const MODULUS: i64 = 100;
+
 pub fn part1(input: String) -> u64 {
     let mut dial: i64 = 50;
     let mut num_zeroes: u64 = 0;
@@ -7,7 +9,7 @@ pub fn part1(input: String) -> u64 {
         .filter_map(|x| x.parse().ok())
         .collect();
     for turn in turns {
-        dial = (dial + turn) % 100;
+        dial = (dial + turn).rem_euclid(MODULUS);
         if dial == 0 {
             num_zeroes += 1;
         }
@@ -24,12 +26,13 @@ pub fn part2(input: String) -> u64 {
         .filter_map(|x| x.parse().ok())
         .collect();
     for turn in turns {
-        for _ in 0..(turn.unsigned_abs()) {
-            dial = (dial + turn.signum()) % 100;
-            if dial == 0 {
-                password += 1;
-            }
-        }
+        let num_crossings = if turn >= 0 {
+            (dial + turn).div_euclid(MODULUS)
+        } else {
+            (dial - 1).div_euclid(MODULUS) - (dial + turn - 1).div_euclid(MODULUS) // magic formula from https://gist.github.com/icub3d/dc8ef4474449d327fda2336f3fe79df9
+        };
+        dial = (dial + turn).rem_euclid(MODULUS);
+        password += num_crossings.unsigned_abs();
     }
     password
 }
