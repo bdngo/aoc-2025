@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use crate::utils;
 
 const MODULUS: i64 = 100;
