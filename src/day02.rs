@@ -1,4 +1,5 @@
-#[allow(dead_code)]
+#![allow(dead_code)]
+
 fn is_invalid_id_part1(id: u64) -> Option<u64> {
     let id_string = id.to_string();
     if !id_string.len().is_multiple_of(2) {
@@ -9,7 +10,6 @@ fn is_invalid_id_part1(id: u64) -> Option<u64> {
     }
 }
 
-#[allow(dead_code)]
 pub fn part1(input: String) -> u64 {
     let ranges: Vec<_> = input
         .trim()
