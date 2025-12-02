@@ -1,5 +1,3 @@
-use fancy_regex::Regex;
-
 #[allow(dead_code)]
 fn is_invalid_id_part1(id: u64) -> Option<u64> {
     let id_string = id.to_string();
@@ -31,12 +29,17 @@ pub fn part1(input: String) -> u64 {
 }
 
 fn is_invalid_id_part2(id: u64) -> Option<u64> {
-    let pat = Regex::new(r"^(\d+?)\1+$").unwrap();
-    if pat.is_match(id.to_string().as_str()).unwrap() {
-        Some(id)
-    } else {
-        None
+    let id_string = id.to_string();
+    let id_len = id_string.len();
+    for chunk_length in 1..=(id_len / 2) {
+        if id_len.is_multiple_of(chunk_length) {
+            let test_subseq = &id_string[..chunk_length];
+            if test_subseq.repeat(id_len / chunk_length) == id_string {
+                return Some(id);
+            }
+        }
     }
+    None
 }
 
 pub fn part2(input: String) -> u64 {
