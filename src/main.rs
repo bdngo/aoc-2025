@@ -2,6 +2,7 @@ use std::{env, error::Error, fs};
 
 mod day01;
 mod day02;
+mod day03;
 mod utils;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -9,7 +10,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let fname = &args[1];
     let input = fs::read_to_string(fname)?;
 
-    let solution = day02::part2(input);
+    let solution = day03::part1(input);
     println!("{}", solution);
 
     Ok(())
