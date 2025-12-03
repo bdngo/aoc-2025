@@ -1,48 +1,16 @@
 #![allow(dead_code)]
 
-use std::{cmp::Ordering, u64::MIN};
+use cached::proc_macro::cached;
+use std::u64::MIN;
 
-#[derive(Debug)]
-struct Joltage((usize, u64));
-
-impl Ord for Joltage {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.0.1.cmp(&other.0.1)
-    }
-}
-
-impl PartialOrd for Joltage {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl PartialEq for Joltage {
-    fn eq(&self, other: &Self) -> bool {
-        self.0.1 == other.0.1
-    }
-}
-
-impl Eq for Joltage {}
-
-fn find_max_joltage(bank: Vec<u64>) -> u64 {
+fn find_max_joltage_part1(bank: Vec<u64>) -> u64 {
     let mut current_max: u64 = MIN;
     for i in 0..bank.len() {
         for j in (i + 1)..bank.len() {
             let test_max = bank[i] * 10 + bank[j];
-            if test_max > current_max {
-                current_max = test_max;
-            }
+            current_max = current_max.max(test_max);
         }
     }
-    // let mut heap = BinaryHeap::from(digits);
-    // let (joltage1, joltage2) = (heap.pop().unwrap(), heap.pop().unwrap());
-    // println!("{:?} {:?}", joltage1, joltage2);
-    // match joltage1.0.0.cmp(&joltage2.0.0) {
-    //     Ordering::Less => joltage1.0.1 * 10 + joltage2.0.1,
-    //     Ordering::Greater => joltage2.0.1 * 10 + joltage1.0.1,
-    //     Ordering::Equal => unreachable!(),
-    // }
     current_max
 }
 
@@ -56,5 +24,38 @@ pub fn part1(input: String) -> u64 {
                 .collect()
         })
         .collect();
-    banks.into_iter().map(|x| find_max_joltage(x)).sum()
+    banks.into_iter().map(|x| find_max_joltage_part1(x)).sum()
+}
+
+const NUM_BATTERIES: usize = 12;
+
+#[cached]
+fn find_max_joltage_part2(bank: Vec<u64>, num_batteries_left: usize) -> u64 {
+    if num_batteries_left == 0 {
+        0
+    } else if bank.len() == num_batteries_left {
+        bank.iter().fold(0u64, |acc, d| acc * 10 + *d)
+    } else {
+        let (car, cdr) = (bank[0], bank[1..].to_vec());
+        let take_head_digit: u64 = car * 10u64.pow((num_batteries_left - 1) as u32)
+            + find_max_joltage_part2(cdr.clone(), num_batteries_left - 1);
+        let discard_head_digit: u64 = find_max_joltage_part2(cdr.clone(), num_batteries_left);
+        take_head_digit.max(discard_head_digit)
+    }
+}
+
+pub fn part2(input: String) -> u64 {
+    let banks: Vec<Vec<u64>> = input
+        .split_whitespace()
+        .map(|x| {
+            x.chars()
+                .filter_map(|x| x.to_digit(10))
+                .map(|x| x as u64)
+                .collect()
+        })
+        .collect();
+    banks
+        .iter()
+        .map(|x| find_max_joltage_part2(x.clone(), NUM_BATTERIES))
+        .sum()
 }
