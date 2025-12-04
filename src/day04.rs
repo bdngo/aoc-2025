@@ -36,10 +36,6 @@ fn count_neighbors(grid: &Vec<Vec<char>>, row_idx: usize, col_idx: usize) -> u64
 
 pub fn part1(input: String) -> u64 {
     let padded_input = pad_grid(input);
-    // .into_iter()
-    // .map(|x| x.into_iter().collect::<String>())
-    // .collect::<Vec<String>>()
-    // .join("\n");
     let mut num_forklift = 0;
     for row_idx in 1..padded_input.len() - 1 {
         for col_idx in 1..padded_input[0].len() - 1 {
@@ -52,4 +48,28 @@ pub fn part1(input: String) -> u64 {
         }
     }
     num_forklift
+}
+
+pub fn part2(input: String) -> u64 {
+    let mut padded_input = pad_grid(input);
+    let mut num_forklift_total = 0;
+    loop {
+        let mut num_forklift = 0;
+        for row_idx in 1..padded_input.len() - 1 {
+            for col_idx in 1..padded_input[0].len() - 1 {
+                let test_char = padded_input[row_idx][col_idx];
+                if test_char == '@' {
+                    if count_neighbors(&padded_input, row_idx, col_idx) <= 4 {
+                        num_forklift += 1;
+                        padded_input[row_idx][col_idx] = '.';
+                    }
+                }
+            }
+        }
+        if num_forklift == 0 {
+            break;
+        }
+        num_forklift_total += num_forklift;
+    }
+    num_forklift_total
 }
