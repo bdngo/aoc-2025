@@ -21,16 +21,30 @@ pub fn part1(input: String) -> u64 {
 }
 
 pub fn part2(input: String) -> u64 {
-    let id_ranges = input.split_once("\n\n").unwrap().0;
-    let id_range_set = id_ranges
+    let mut id_ranges: Vec<_> = input
+        .split_once("\n\n")
+        .unwrap()
+        .0
         .lines()
         .map(|x| x.split_once("-").unwrap())
         .map(|(x, y)| {
             let parsed_x: u64 = x.parse().unwrap();
             let parsed_y: u64 = y.parse().unwrap();
-            (parsed_x..=parsed_y).collect::<BTreeSet<_>>()
+            (parsed_x, parsed_y)
         })
-        .reduce(|acc, e| acc.union(&e).cloned().collect())
-        .unwrap();
-    id_range_set.len() as u64
+        .collect();
+    id_ranges.sort_by_key(|x| x.0);
+    let mut merged_ranges: Vec<(u64, u64)> = Vec::new();
+    for (range_start, range_end) in id_ranges {
+        if let Some((_, last_end)) = merged_ranges.last_mut() {
+            if range_start <= *last_end + 1 {
+                *last_end = (*last_end).max(range_end);
+            } else {
+                merged_ranges.push((range_start, range_end));
+            }
+        } else {
+            merged_ranges.push((range_start, range_end)); // one-time case to seed merged ranges
+        }
+    }
+    merged_ranges.into_iter().map(|(x, y)| y - x + 1).sum()
 }
