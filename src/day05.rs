@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 
 use crate::utils;
-use std::collections::BTreeSet;
 
 pub fn part1(input: String) -> u64 {
     let (id_ranges, ids) = input.split_once("\n\n").unwrap();
