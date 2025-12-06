@@ -28,3 +28,43 @@ pub fn part1(input: String) -> u64 {
         })
         .sum()
 }
+
+pub fn part2(input: String) -> u64 {
+    let (operands, operators) = input.trim_end().rsplit_once("\n").unwrap();
+    let operand_matrix: Vec<_> = operands
+        .lines()
+        .map(|x| x.chars().collect::<Vec<char>>())
+        .collect();
+    let operator_list: Vec<_> = operators.split_whitespace().collect();
+    let num_equations = operator_list.len();
+
+    let mut cephalopod_operands = transpose(&operand_matrix)
+        .into_iter()
+        .map(|x| x.into_iter().collect::<String>());
+    let cephalopod_matrix: Vec<Vec<String>> = (0..num_equations)
+        .map(|_| {
+            cephalopod_operands
+                .by_ref()
+                .take_while(|x| !x.trim().is_empty())
+                .collect::<Vec<_>>()
+        })
+        .collect();
+    let cephalopod_matrix: Vec<Vec<u64>> = cephalopod_matrix
+        .into_iter()
+        .map(|x| {
+            x.into_iter()
+                .filter_map(|y| y.trim().parse().ok())
+                .collect()
+        })
+        .collect();
+
+    cephalopod_matrix
+        .into_iter()
+        .zip(operator_list)
+        .filter_map(|(operands, operator)| match operator {
+            "*" => operands.into_iter().reduce(|acc, e| acc * e),
+            "+" => operands.into_iter().reduce(|acc, e| acc + e),
+            _ => unreachable!(),
+        })
+        .sum()
+}
