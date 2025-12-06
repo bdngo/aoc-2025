@@ -1,18 +1,9 @@
 #![allow(dead_code)]
 
-fn transpose<T: Clone>(matrix: Vec<Vec<T>>) -> Vec<Vec<T>> {
-    if matrix.is_empty() {
-        return vec![];
-    }
-
-    let (r, c) = (matrix.len(), matrix[0].len());
-    let mut transposed_matrix = vec![Vec::with_capacity(r); c];
-    for row in matrix {
-        for (k, v) in row.into_iter().enumerate() {
-            transposed_matrix[k].push(v);
-        }
-    }
-    transposed_matrix
+fn transpose<T: Clone>(matrix: &Vec<Vec<T>>) -> Vec<Vec<T>> {
+    (0..matrix[0].len())
+        .map(|col| matrix.iter().map(|row| row[col].clone()).collect())
+        .collect()
 }
 
 pub fn part1(input: String) -> u64 {
@@ -26,7 +17,7 @@ pub fn part1(input: String) -> u64 {
         })
         .collect();
     let operator_list: Vec<_> = operators.split_whitespace().collect();
-    let transposed_operands = transpose(operand_matrix);
+    let transposed_operands = transpose(&operand_matrix);
     transposed_operands
         .into_iter()
         .zip(operator_list)
