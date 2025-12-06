@@ -22,8 +22,8 @@ pub fn part1(input: String) -> u64 {
         .into_iter()
         .zip(operator_list)
         .filter_map(|(operands, operator)| match operator {
-            "*" => operands.into_iter().reduce(|acc, e| acc * e),
-            "+" => operands.into_iter().reduce(|acc, e| acc + e),
+            "*" => Some(operands.into_iter().product::<u64>()),
+            "+" => Some(operands.into_iter().sum()),
             _ => unreachable!(),
         })
         .sum()
@@ -62,8 +62,8 @@ pub fn part2(input: String) -> u64 {
         .into_iter()
         .zip(operator_list)
         .filter_map(|(operands, operator)| match operator {
-            "*" => operands.into_iter().reduce(|acc, e| acc * e),
-            "+" => operands.into_iter().reduce(|acc, e| acc + e),
+            "*" => Some(operands.into_iter().product::<u64>()),
+            "+" => Some(operands.into_iter().sum()),
             _ => unreachable!(),
         })
         .sum()
